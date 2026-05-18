@@ -10,7 +10,7 @@ export function orderDocToPdfInput(
   const items =
     (data.items as Array<{
       name_en: string;
-      name_ar: string;
+      name_ar?: string;
       quantity: number;
       price: number;
     }>) ?? [];
@@ -39,8 +39,7 @@ export function orderDocToPdfInput(
       data.customerAddress != null ? String(data.customerAddress) : undefined,
     notes: data.notes != null ? String(data.notes) : "",
     items: items.map((i) => ({
-      name_en: i.name_en,
-      name_ar: i.name_ar,
+      name_en: i.name_en?.trim() || i.name_ar?.trim() || "—",
       quantity: i.quantity,
       price: i.price,
     })),

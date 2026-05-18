@@ -23,6 +23,7 @@ const config: Config = {
       fontFamily: {
         en: ["var(--font-en)"],
         ar: ["var(--font-ar)"],
+        "ar-luxury": ["var(--font-ar-luxury)", "var(--font-ar)", "serif"],
         heading: ["var(--font-display)", "var(--font-ar)", "Impact", "sans-serif"],
         body: ["var(--font-en)", "var(--font-ar)", "system-ui", "sans-serif"],
       },

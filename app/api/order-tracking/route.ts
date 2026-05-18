@@ -69,7 +69,6 @@ function normalizeOrderId(raw: string | undefined): string | null {
 type OrderItemRow = {
   productId: string;
   name_en: string;
-  name_ar: string;
   price: number;
   quantity: number;
   imageUrl: string;
@@ -147,8 +146,7 @@ export async function POST(req: NextRequest) {
       const r = row as Record<string, unknown>;
       return {
         productId: String(r.productId ?? ""),
-        name_en: String(r.name_en ?? ""),
-        name_ar: String(r.name_ar ?? ""),
+        name_en: String(r.name_en ?? r.name_ar ?? ""),
         price: Number(r.price ?? 0),
         quantity: Number(r.quantity ?? 0),
         imageUrl: String(r.imageUrl ?? ""),
@@ -172,7 +170,6 @@ export async function POST(req: NextRequest) {
       status,
       items: items.map((it) => ({
         name_en: it.name_en,
-        name_ar: it.name_ar,
         quantity: it.quantity,
         unitPrice: it.price,
         lineTotal: it.price * it.quantity,

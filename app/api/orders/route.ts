@@ -14,7 +14,6 @@ export const dynamic = "force-dynamic";
 const orderItemSchema = z.object({
   productId: z.string(),
   name_en: z.string(),
-  name_ar: z.string(),
   price: z.number(),
   quantity: z.number().int().positive(),
   imageUrl: z.string(),
@@ -86,7 +85,6 @@ export async function POST(req: NextRequest) {
       notes: notes ?? "",
       items: items.map((i) => ({
         name_en: i.name_en,
-        name_ar: i.name_ar,
         quantity: i.quantity,
         price: i.price,
       })),

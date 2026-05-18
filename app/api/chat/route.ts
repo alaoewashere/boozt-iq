@@ -22,7 +22,6 @@ const bodySchema = z.object({
 type ProductRow = {
   id: string;
   name_en: string;
-  name_ar: string;
   price: number;
   category?: string;
   stock?: number | boolean;
@@ -46,15 +45,10 @@ function coerceLocalizedName(v: unknown): { en?: string; ar?: string } | null {
   return { en, ar };
 }
 
-function extractProductNames(x: Record<string, unknown>): { name_en: string; name_ar: string } {
-  // Try common direct fields first
+function extractProductName(x: Record<string, unknown>): string {
   const nameEn = pickFirstString(x, ["name_en", "nameEn", "englishName", "title_en", "titleEn"]);
   const nameAr = pickFirstString(x, ["name_ar", "nameAr", "arabicName", "title_ar", "titleAr"]);
-
-  // Generic name/title fields (single string)
   const nameGeneric = pickFirstString(x, ["name", "title", "productName", "label"]);
-
-  // Localized object fields
   const localized =
     coerceLocalizedName(x.name) ??
     coerceLocalizedName(x.title) ??
@@ -62,10 +56,11 @@ function extractProductNames(x: Record<string, unknown>): { name_en: string; nam
     coerceLocalizedName(x.translations) ??
     coerceLocalizedName(x.i18n);
 
-  const en = nameEn ?? localized?.en ?? (nameGeneric && !hasArabicScript(nameGeneric) ? nameGeneric : "") ?? "";
-  const ar = nameAr ?? localized?.ar ?? (nameGeneric && hasArabicScript(nameGeneric) ? nameGeneric : "") ?? "";
-
-  return { name_en: en, name_ar: ar };
+  const en = nameEn ?? localized?.en ?? "";
+  const ar = nameAr ?? localized?.ar ?? "";
+  if (en) return en;
+  if (ar) return ar;
+  return nameGeneric ?? "";
 }
 
 function normalize(s: string): string {
@@ -100,12 +95,8 @@ function fmtStock(stock: ProductRow["stock"]): string {
   return "unknown";
 }
 
-function formatProductShort(p: ProductRow, lang: "ar" | "en"): string {
-  const rawName =
-    lang === "ar"
-      ? p.name_ar?.trim() || p.name_en?.trim() || "—"
-      : p.name_en?.trim() || p.name_ar?.trim() || "—";
-  const name = rawName.slice(0, 80);
+function formatProductShort(p: ProductRow, _lang: "ar" | "en"): string {
+  const name = (p.name_en?.trim() || "—").slice(0, 80);
   const price = Number.isFinite(p.price) ? Math.round(p.price) : 0;
   const stock = fmtStock(p.stock).startsWith("in_stock") ? "in stock" : "out";
   return `- ${name} | ${price.toLocaleString("en-US")} IQD | ${stock}`;
@@ -169,7 +160,7 @@ function scoreProductMatch(q: string, p: ProductRow): number {
   const query = normalize(q);
   if (!query) return 0;
 
-  const hay = normalize(`${p.name_en ?? ""} ${p.name_ar ?? ""}`);
+  const hay = normalize(p.name_en ?? "");
   if (!hay) return 0;
 
   // Token scoring: exact substring hits are stronger than per-token hits.
@@ -260,11 +251,10 @@ async function fetchAllProducts(): Promise<ProductRow[]> {
   const docs = await getProductsScan();
   return docs.map((d) => {
     const x = d as unknown as Record<string, unknown>;
-    const names = extractProductNames(x);
+    const names = extractProductName(x);
     return {
       id: d.id,
-      name_en: names.name_en,
-      name_ar: names.name_ar,
+      name_en: names,
       price: Number(x.price ?? 0),
       category:
         x.category != null

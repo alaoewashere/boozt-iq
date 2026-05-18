@@ -7,6 +7,7 @@ import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/navigation";
 import { fadeUp, staggerContainer } from "@/lib/animations";
+import { cn } from "@/lib/utils";
 import type { CategoryTreeWithCover } from "@/lib/types";
 
 const SmokeParticles = dynamic(
@@ -17,7 +18,7 @@ const SmokeParticles = dynamic(
 
 function splitHeroTitle(title: string, locale: string) {
   if (locale === "ar") {
-    const key = "المميز";
+    const key = "فخامة";
     const i = title.indexOf(key);
     if (i >= 0) {
       return {
@@ -73,7 +74,12 @@ export function HeroSection({
           animate="visible"
           variants={fadeUp}
           transition={{ delay: 0.05 }}
-          className="mb-8 font-heading uppercase leading-none text-[clamp(5rem,12vw,9rem)] text-[#EFE6DE]"
+          className={cn(
+            "mb-8 text-[#EFE6DE]",
+            locale === "ar"
+              ? "font-ar-luxury text-[clamp(2rem,5vw,3.25rem)] font-normal leading-snug tracking-[0.02em]"
+              : "font-heading text-[clamp(5rem,12vw,9rem)] uppercase leading-none"
+          )}
         >
           {accent ? (
             <>

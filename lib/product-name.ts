@@ -3,13 +3,10 @@
  * or legacy data duplicated Arabic into `name_en`.
  */
 export function getProductDisplayName(
-  locale: string | undefined,
-  product: { name_en?: string | null; name_ar?: string | null }
+  _locale: string | undefined,
+  product: { name_en?: string | null }
 ): string {
-  const en = String(product.name_en ?? "").trim();
-  const ar = String(product.name_ar ?? "").trim();
-  if (locale === "ar") return ar || en;
-  return en || ar;
+  return String(product.name_en ?? "").trim();
 }
 
 /** True if the string contains Arabic script (common ranges). */

@@ -4,7 +4,6 @@ import { persist } from "zustand/middleware";
 export interface WishlistItem {
   id: string;
   name_en: string;
-  name_ar: string;
   price: number;
   imageUrl: string;
   categorySlug?: string;

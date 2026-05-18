@@ -18,7 +18,6 @@ const CATEGORY_KEYS = ["hookah", "vape", "pods", "boardgames", "nicotine", "ciga
 export type ProductDetail = {
   id: string;
   name_en: string;
-  name_ar: string;
   description_en: string;
   description_ar: string;
   price: number;
@@ -58,7 +57,6 @@ export function ProductDetailClient({
   const wishItem = () => ({
     id: product.id,
     name_en: product.name_en,
-    name_ar: product.name_ar,
     price: product.price,
     imageUrl: product.imageUrl?.trim() || "",
     categorySlug: product.categorySlug,
@@ -69,7 +67,6 @@ export function ProductDetailClient({
       addItem({
         id: product.id,
         name_en: product.name_en,
-        name_ar: product.name_ar,
         price: product.price,
         imageUrl: product.imageUrl,
       });

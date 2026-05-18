@@ -551,9 +551,18 @@ const getProductsApiListInner = cache((stableKey: string) =>
         const s = query.search.toLowerCase();
         rows = rows.filter((p) => {
           const name_en = String(p.name_en ?? "").toLowerCase();
-          const name_ar = String(p.name_ar ?? "").toLowerCase();
-          return name_en.includes(s) || name_ar.includes(s);
+          return name_en.includes(s);
         });
+      }
+
+      const categoryOnly =
+        Boolean(query.categorySlug) && !resolvedSubId && !query.subcategorySlug;
+      if (categoryOnly) {
+        rows.sort((a, b) =>
+          String(a.name_en ?? "").localeCompare(String(b.name_en ?? ""), undefined, {
+            sensitivity: "base",
+          })
+        );
       }
 
       const total = rows.length;

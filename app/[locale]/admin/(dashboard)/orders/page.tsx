@@ -12,7 +12,6 @@ import { getProductDisplayName } from "@/lib/product-name";
 type OrderItem = {
   productId: string;
   name_en: string;
-  name_ar: string;
   price: number;
   quantity: number;
   imageUrl: string;

@@ -26,7 +26,6 @@ export default async function EditProductPage({
         productId={id}
         initial={{
           name_en: d.name_en as string,
-          name_ar: d.name_ar as string,
           description_en: (d.description_en as string) || "",
           description_ar: (d.description_ar as string) || "",
           price: d.price as number,

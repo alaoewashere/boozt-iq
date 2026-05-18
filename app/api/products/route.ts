@@ -71,7 +71,6 @@ export async function POST(req: NextRequest) {
   }
 
   const name_en = String(form.get("name_en") || "");
-  const name_ar = String(form.get("name_ar") || "");
   const description_en = String(form.get("description_en") || "");
   const description_ar = String(form.get("description_ar") || "");
   const price = Number(form.get("price"));
@@ -81,7 +80,6 @@ export async function POST(req: NextRequest) {
 
   if (
     !name_en ||
-    !name_ar ||
     !categoryId ||
     !subcategoryId ||
     !Number.isFinite(price) ||
@@ -100,7 +98,6 @@ export async function POST(req: NextRequest) {
 
   const row = adminFormToProductRow({
     name_en,
-    name_ar,
     description_en,
     description_ar,
     price,

@@ -13,7 +13,9 @@
     "import:products-only": "tsx --env-file=.env.local lib/reset-products-to-products-csv.ts",
     "import:boozt6": "tsx --env-file=.env.local lib/import-products-from-boozt6-csv.ts \"Boozt new 6.csv\"",
     "import:full-catalog": "tsx --env-file=.env.local lib/import-full-catalog.ts --public-images",
-    "import:full-catalog:fresh": "tsx --env-file=.env.local lib/import-full-catalog.ts --public-images --replace-all"
+    "import:full-catalog:fresh": "tsx --env-file=.env.local lib/import-full-catalog.ts --public-images --replace-all",
+    "dedupe:products": "tsx --env-file=.env.local lib/dedupe-products.ts",
+    "dedupe:products:apply": "tsx --env-file=.env.local lib/dedupe-products.ts -- --apply"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.86.1",

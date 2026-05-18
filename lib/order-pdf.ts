@@ -24,7 +24,6 @@ const FONTS_DIR = path.join(process.cwd(), "lib", "fonts");
 
 export type OrderPdfLineItem = {
   name_en: string;
-  name_ar: string;
   quantity: number;
   price: number;
 };
@@ -221,7 +220,6 @@ export async function buildOrderPdfBuffer(input: OrderPdfInput): Promise<Buffer>
         bold: true,
         fontSize: 9,
       },
-      arCell("المنتج", { bold: true, fontSize: 9 }),
       {
         text: "Qty",
         font: FONT_LATIN,
@@ -250,12 +248,11 @@ export async function buildOrderPdfBuffer(input: OrderPdfInput): Promise<Buffer>
     const line = it.quantity * it.price;
     bodyRows.push([
       {
-        text: it.name_en?.trim() || it.name_ar?.trim() || "—",
+        text: it.name_en?.trim() || "—",
         font: FONT_LATIN,
         fontSize: 9,
         alignment: "left",
       },
-      arCell(it.name_ar?.trim() || it.name_en?.trim() || "—", { fontSize: 9 }),
       {
         text: String(it.quantity),
         font: FONT_LATIN,
@@ -377,7 +374,7 @@ export async function buildOrderPdfBuffer(input: OrderPdfInput): Promise<Buffer>
       {
         table: {
           headerRows: 1,
-          widths: ["*", "*", 36, 70, 72],
+          widths: ["*", 36, 70, 72],
           body: bodyRows,
         },
         layout: {

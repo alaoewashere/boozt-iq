@@ -114,7 +114,6 @@ export async function PUT(
   const stock = Number.isFinite(stockRaw) ? Math.trunc(stockRaw) : NaN;
 
   const name_en = String(form.get("name_en") ?? "");
-  const name_ar = String(form.get("name_ar") ?? "");
   const description_en = String(form.get("description_en") ?? "");
   const description_ar = String(form.get("description_ar") ?? "");
   const categorySlug = String(form.get("categorySlug") ?? "");
@@ -124,12 +123,6 @@ export async function PUT(
   if (!name_en.trim()) {
     return NextResponse.json(
       { error: "Product name (English) is required." },
-      { status: 400 }
-    );
-  }
-  if (!name_ar.trim()) {
-    return NextResponse.json(
-      { error: "Product name (Arabic) is required." },
       { status: 400 }
     );
   }
@@ -176,7 +169,6 @@ export async function PUT(
 
   const row = adminFormToProductRow({
     name_en,
-    name_ar,
     description_en,
     description_ar,
     price,

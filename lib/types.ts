@@ -1,7 +1,6 @@
 export type ProductDoc = {
   id: string;
   name_en: string;
-  name_ar: string;
   description_en: string;
   description_ar: string;
   price: number;
@@ -46,7 +45,6 @@ export type CategoryTreeWithCover = {
 export type OrderItem = {
   productId: string;
   name_en: string;
-  name_ar: string;
   price: number;
   quantity: number;
   imageUrl: string;

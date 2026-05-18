@@ -11,7 +11,6 @@ import { PageHeading } from "@/components/ui/PageHeading";
 type Row = {
   id: string;
   name_en: string;
-  name_ar: string;
   categorySlug?: string;
   price: number;
   stock: number;
@@ -40,7 +39,6 @@ export default function AdminProductsPage() {
         data.products.map((p) => ({
           id: String(p.id ?? ""),
           name_en: String(p.name_en ?? ""),
-          name_ar: String(p.name_ar ?? ""),
           categorySlug: p.categorySlug != null ? String(p.categorySlug) : undefined,
           price: Number(p.price ?? 0),
           stock: Number(p.stock ?? 0),
@@ -61,8 +59,7 @@ export default function AdminProductsPage() {
     return rows.filter((r) => {
       const m =
         !search ||
-        r.name_en.toLowerCase().includes(search.toLowerCase()) ||
-        (r.name_ar ?? "").toLowerCase().includes(search.toLowerCase());
+        r.name_en.toLowerCase().includes(search.toLowerCase());
       const c = !cat || r.categorySlug === cat;
       return m && c;
     });
@@ -111,8 +108,7 @@ export default function AdminProductsPage() {
           <thead className="border-b border-[var(--border)] bg-secondary/50">
             <tr>
               <th className="px-3 py-2">Image</th>
-              <th className="px-3 py-2">Name (EN)</th>
-              <th className="px-3 py-2">Name (AR)</th>
+              <th className="px-3 py-2">Name</th>
               <th className="px-3 py-2">Category</th>
               <th className="px-3 py-2">{t("common.price")}</th>
               <th className="px-3 py-2">{t("common.stock")}</th>
@@ -134,17 +130,14 @@ export default function AdminProductsPage() {
                       />
                     ) : (
                       <ProductImagePlaceholder
-                        name={r.name_en || r.name_ar}
+                        name={r.name_en}
                         textClassName="text-lg"
                       />
                     )}
                   </div>
                 </td>
-                <td className="max-w-[220px] px-3 py-2 font-medium">
+                <td className="max-w-[320px] px-3 py-2 font-medium">
                   {r.name_en}
-                </td>
-                <td className="max-w-[260px] px-3 py-2 text-[var(--text-secondary)]" dir="rtl">
-                  {r.name_ar}
                 </td>
                 <td className="px-3 py-2">{r.categorySlug}</td>
                 <td className="px-3 py-2">{r.price}</td>

@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useSearchParams } from "next/navigation";
@@ -23,6 +24,99 @@ export type CatalogCategoryRow = {
 
 const productGridClass =
   "grid grid-cols-2 gap-3 p-4 md:grid-cols-3 lg:grid-cols-4 lg:p-6";
+
+function buildPageItems(
+  current: number,
+  totalPages: number
+): (number | "ellipsis")[] {
+  if (totalPages <= 1) return [1];
+  const pages = new Set<number>([1, totalPages]);
+  for (let i = current - 1; i <= current + 1; i++) {
+    if (i >= 1 && i <= totalPages) pages.add(i);
+  }
+  const sorted = [...pages].sort((a, b) => a - b);
+  const items: (number | "ellipsis")[] = [];
+  for (let i = 0; i < sorted.length; i++) {
+    const n = sorted[i]!;
+    if (i > 0 && n - sorted[i - 1]! > 1) items.push("ellipsis");
+    items.push(n);
+  }
+  return items;
+}
+
+const paginationBtnBase =
+  "rounded-[2px] border border-[rgba(154,0,2,0.12)] bg-[#110608] px-3 py-1.5 font-body text-sm font-light text-[#9A7F7A] transition-all duration-200 hover:border-[rgba(154,0,2,0.35)] hover:text-[#EFE6DE]";
+
+function CatalogPagination({
+  page,
+  totalPages,
+  onPageChange,
+}: {
+  page: number;
+  totalPages: number;
+  onPageChange: (next: number) => void;
+}) {
+  const items = buildPageItems(page, totalPages);
+
+  return (
+    <nav
+      className="mb-4 mt-8 flex animate-fadeInUp flex-wrap items-center justify-center gap-1.5 opacity-100 transition-opacity duration-300"
+      aria-label="Product pages"
+    >
+      <button
+        type="button"
+        disabled={page <= 1}
+        onClick={() => onPageChange(page - 1)}
+        className={cn(
+          paginationBtnBase,
+          "disabled:pointer-events-none disabled:opacity-40"
+        )}
+      >
+        « Prev
+      </button>
+      {items.map((item, idx) =>
+        item === "ellipsis" ? (
+          <span
+            key={`ellipsis-${idx}`}
+            className="px-1 font-body text-sm text-[#4D3030]"
+            aria-hidden
+          >
+            …
+          </span>
+        ) : (
+          <button
+            key={item}
+            type="button"
+            onClick={() => onPageChange(item)}
+            aria-current={item === page ? "page" : undefined}
+            className={cn(
+              "min-w-[2.25rem] rounded-[2px] border px-3 py-1.5 font-body text-sm font-light transition-all duration-200",
+              item === page
+                ? "border-[#9A0002] bg-[#9A0002] text-[#EFE6DE] shadow-[0_0_18px_rgba(154,0,2,0.35)]"
+                : cn(
+                    paginationBtnBase,
+                    "bg-[#1A080A] text-[#EFE6DE]"
+                  )
+            )}
+          >
+            {item}
+          </button>
+        )
+      )}
+      <button
+        type="button"
+        disabled={page >= totalPages}
+        onClick={() => onPageChange(page + 1)}
+        className={cn(
+          paginationBtnBase,
+          "disabled:pointer-events-none disabled:opacity-40"
+        )}
+      >
+        Next »
+      </button>
+    </nav>
+  );
+}
 
 function SubcategoryChipScroll({ children }: { children: React.ReactNode }) {
   return (
@@ -70,7 +164,13 @@ export function ProductsCatalog({
   const [searchInput, setSearchInput] = useState(searchFromUrl);
   const [products, setProducts] = useState<ProductDoc[]>([]);
   const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const gridTopRef = useRef<HTMLDivElement>(null);
+
+  const showFullCategory =
+    Boolean(effectiveCategorySlug) && !subcategorySlug.trim();
+  const catalogLimit = showFullCategory ? 1200 : 48;
 
   useEffect(() => {
     setSearchInput(searchFromUrl);
@@ -108,6 +208,10 @@ export function ProductsCatalog({
   }, [searchInput, searchFromUrl, replaceQuery]);
 
   useEffect(() => {
+    setPage(1);
+  }, [effectiveCategorySlug, subcategorySlug, searchFromUrl]);
+
+  useEffect(() => {
     let cancelled = false;
     setLoading(true);
     const qs = new URLSearchParams();
@@ -115,11 +219,18 @@ export function ProductsCatalog({
     if (effectiveCategorySlug && subcategorySlug)
       qs.set("subcategory", subcategorySlug);
     if (searchFromUrl) qs.set("search", searchFromUrl);
-    qs.set("limit", "48");
+    qs.set("limit", String(catalogLimit));
+    qs.set("page", String(page));
 
     fetch(`/api/products?${qs.toString()}`)
       .then((r) => r.json())
-      .then((d: { products?: ProductDoc[]; total?: number }) => {
+      .then(
+        (d: {
+          products?: ProductDoc[];
+          total?: number;
+          page?: number;
+          totalPages?: number;
+        }) => {
         if (cancelled) return;
         setProducts((d.products ?? []) as ProductDoc[]);
         setTotal(typeof d.total === "number" ? d.total : 0);
@@ -137,7 +248,20 @@ export function ProductsCatalog({
     return () => {
       cancelled = true;
     };
-  }, [effectiveCategorySlug, subcategorySlug, searchFromUrl]);
+  }, [effectiveCategorySlug, subcategorySlug, searchFromUrl, page, catalogLimit]);
+
+  const totalPages = useMemo(
+    () => Math.max(1, Math.ceil(total / catalogLimit)),
+    [total, catalogLimit]
+  );
+
+  const showPagination = total > catalogLimit;
+
+  const goToPage = useCallback((next: number) => {
+    const clamped = Math.min(Math.max(1, next), totalPages);
+    setPage(clamped);
+    gridTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [totalPages]);
 
   const selectedRow = useMemo(
     () =>
@@ -335,7 +459,7 @@ export function ProductsCatalog({
           )}
         </aside>
 
-        <div className="min-w-0 flex-1">
+        <div ref={gridTopRef} className="min-w-0 flex-1 scroll-mt-24">
           <p className="mb-4 font-body text-[0.78rem] font-light tracking-[0.05em] text-[#4D3030]">
             {loading ? t("loadingResults") : t("resultsCount", { count: total })}
           </p>
@@ -362,15 +486,24 @@ export function ProductsCatalog({
               </p>
             </div>
           ) : (
-            <div className={productGridClass}>
-              {products.map((p) => (
-                <ProductCard
-                  key={p.id}
-                  product={toProductCardData(p as ProductDoc)}
-                  locale={locale}
+            <>
+              <div className={productGridClass}>
+                {products.map((p) => (
+                  <ProductCard
+                    key={p.id}
+                    product={toProductCardData(p as ProductDoc)}
+                    locale={locale}
+                  />
+                ))}
+              </div>
+              {showPagination && (
+                <CatalogPagination
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={goToPage}
                 />
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>

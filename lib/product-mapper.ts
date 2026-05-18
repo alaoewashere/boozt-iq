@@ -6,7 +6,6 @@ export function toProductDetail(p: ProductDoc): ProductDetail {
   return {
     id: p.id,
     name_en: p.name_en,
-    name_ar: p.name_ar,
     description_en: p.description_en,
     description_ar: p.description_ar,
     price: p.price,
@@ -21,7 +20,6 @@ export function toProductCardData(p: ProductDoc): ProductCardData {
   return {
     id: p.id,
     name_en: p.name_en,
-    name_ar: p.name_ar,
     price: p.price,
     stock: p.stock,
     isAvailable: p.isAvailable,

@@ -16,28 +16,34 @@ function parsePriceIqd(text: string | null): number {
   return Number.isFinite(n) && n > 0 ? n : 0;
 }
 
-function parseNames(productName: string): { name_en: string; name_ar: string } {
+function parseProductName(productName: string): string {
   const raw = String(productName ?? "").trim();
   if (raw.startsWith("{")) {
     try {
       const o = JSON.parse(raw) as { en?: string; ar?: string };
       const en = String(o.en ?? "").trim();
       const ar = String(o.ar ?? "").trim();
-      if (en || ar) return { name_en: en || ar, name_ar: ar || en };
+      if (en) return en;
+      if (ar) return ar;
     } catch {
       /* fall through */
     }
   }
-  return { name_en: raw, name_ar: raw };
+  return raw;
 }
 
-/** Map CSV / free-text category to storefront slugs. */
-export function inferCategorySlugs(categoryText: string | null): {
+/** Map CSV / free-text category (and optional product name) to storefront slugs. */
+export function inferCategorySlugs(
+  categoryText: string | null,
+  productName?: string | null
+): {
   categorySlug: string;
   subcategorySlug: string;
 } {
-  const t = String(categoryText ?? "").toLowerCase();
-  const slash = String(categoryText ?? "")
+  const cat = String(categoryText ?? "").trim();
+  const name = String(productName ?? "").trim();
+  const t = `${cat} ${name}`.toLowerCase();
+  const slash = cat
     .trim()
     .match(/^([a-z0-9-]+)\s*\/\s*([a-z0-9-]+)$/i);
   if (slash) {
@@ -46,6 +52,22 @@ export function inferCategorySlugs(categoryText: string | null): {
     if (cat in CATEGORY_IDS && sub in SUBCATEGORY_IDS) {
       return { categorySlug: cat, subcategorySlug: sub };
     }
+  }
+  if (
+    /^hookah\s+molasses\s+packets$/i.test(cat) ||
+    /^hookah\s*\/\s*hookah-molasses-packets$/i.test(cat)
+  ) {
+    return {
+      categorySlug: "hookah",
+      subcategorySlug: "hookah-molasses-packets",
+    };
+  }
+  /** DB category "Hookah" / "Hookahs" (full devices) — 🪔 Hookah → Hookahs subcategory. */
+  if (
+    /^hookahs?$/i.test(cat) ||
+    /^hookah\s*\/\s*hookahs$/i.test(cat)
+  ) {
+    return { categorySlug: "hookah", subcategorySlug: "hookahs" };
   }
   if (t.includes("oxbar") && t.includes("g turbo")) {
     return { categorySlug: "vape", subcategorySlug: "oxbar-g-turbo" };
@@ -110,7 +132,7 @@ export function inferCategorySlugs(categoryText: string | null): {
   if (t.includes("lost mary") || t.includes("lostmary")) {
     return { categorySlug: "pods", subcategorySlug: "lost-mary" };
   }
-  if (t.includes("hucca") || t.includes("هوكا")) {
+  if (t.includes("hucca") || t.includes("huuca") || t.includes("هوكا")) {
     return { categorySlug: "pods", subcategorySlug: "hucca" };
   }
   if (t.includes("cool star") || t.includes("coolstar")) {
@@ -126,10 +148,11 @@ export function inferCategorySlugs(categoryText: string | null): {
     return { categorySlug: "pods", subcategorySlug: "al-fakher" };
   }
   if (
-    t === "hookah" ||
     t === "hookah-pod" ||
+    /^hookah\s*\/\s*hookah-pod$/i.test(cat) ||
     (t.includes("hookah") &&
       (t.includes("pod") || t.includes("بود") || t.includes("puff") || t.includes("disposable")) &&
+      !/^hookah$/i.test(cat) &&
       !t.includes("parts") &&
       !t.includes("molasses") &&
       !t.includes("معسل"))
@@ -232,10 +255,21 @@ export function inferCategorySlugs(categoryText: string | null): {
     return { categorySlug: "boardgames", subcategorySlug: "cards" };
   }
   if (
-    /\bparts\b/i.test(String(categoryText ?? "")) &&
-    (t.includes("hookah") || t.includes("hokkah") || t.includes("شيشة"))
+    /\bparts\b/i.test(cat) &&
+    (t.includes("hookah") || t.includes("hokkah") || t.includes("شيشة")) &&
+    !t.includes("huuca") &&
+    !t.includes("hucca")
   ) {
     return { categorySlug: "hookah", subcategorySlug: "parts" };
+  }
+  if (
+    /hookah\s+molasses\s+packets/i.test(cat) ||
+    (/\bpacket/i.test(cat) && /\bmolasses\b/i.test(cat) && !t.includes("pod"))
+  ) {
+    return {
+      categorySlug: "hookah",
+      subcategorySlug: "hookah-molasses-packets",
+    };
   }
   if (t.includes("molasses") || t.includes("معسل") || t.includes("hokkah") || t.includes("hookah")) {
     return { categorySlug: "hookah", subcategorySlug: "molasses" };
@@ -253,8 +287,11 @@ function slugToIds(categorySlug: string, subSlug: string) {
 }
 
 export function rowToProductDoc(row: SupabaseProductRow): ProductDoc {
-  const { name_en, name_ar } = parseNames(row.product_name);
-  const { categorySlug, subcategorySlug } = inferCategorySlugs(row.category);
+  const name_en = parseProductName(row.product_name);
+  const { categorySlug, subcategorySlug } = inferCategorySlugs(
+    row.category,
+    name_en
+  );
   const { categoryId, subcategoryId } = slugToIds(categorySlug, subcategorySlug);
   const price = parsePriceIqd(row.price);
   const weight = String(row.weight ?? "").trim();
@@ -262,7 +299,6 @@ export function rowToProductDoc(row: SupabaseProductRow): ProductDoc {
   return {
     id: String(row.id),
     name_en,
-    name_ar,
     description_en: weight ? `Weight: ${weight}` : "",
     description_ar: weight ? `الوزن: ${weight}` : "",
     price,
@@ -281,17 +317,13 @@ export function rowToProductDoc(row: SupabaseProductRow): ProductDoc {
 
 export function adminFormToProductRow(fields: {
   name_en: string;
-  name_ar: string;
   description_en: string;
   description_ar: string;
   price: number;
   categorySlug: string;
   subcategorySlug: string;
 }): Omit<SupabaseProductRow, "id"> {
-  const product_name = JSON.stringify({
-    en: fields.name_en.trim(),
-    ar: fields.name_ar.trim(),
-  });
+  const product_name = fields.name_en.trim();
   const category = `${fields.categorySlug} / ${fields.subcategorySlug}`;
   const weight = [fields.description_en, fields.description_ar]
     .filter(Boolean)

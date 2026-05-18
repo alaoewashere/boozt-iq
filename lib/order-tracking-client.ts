@@ -2,7 +2,6 @@ export type ChatTurn = { role: "user" | "assistant"; content: string };
 
 export type OrderItemLine = {
   name_en: string;
-  name_ar: string;
   quantity: number;
   unitPrice: number;
   lineTotal: number;

@@ -14,8 +14,7 @@ import { useRouter } from "@/navigation";
 import { ProductImageUpload } from "./ProductImageUpload";
 
 const schema = z.object({
-  name_en: z.string().min(1, "Product name (English) is required."),
-  name_ar: z.string().min(1, "Product name (Arabic) is required."),
+  name_en: z.string().min(1, "Product name is required."),
   description_en: z.preprocess(
     (val) => (val == null || val === "" ? "" : String(val)).trim(),
     z.string()
@@ -130,7 +129,6 @@ export function ProductForm({
     resolver: zodResolver(schema),
     defaultValues: {
       name_en: initial?.name_en ?? "",
-      name_ar: initial?.name_ar ?? "",
       description_en: initial?.description_en ?? "",
       description_ar: initial?.description_ar ?? "",
       price: initial?.price ?? 0,
@@ -184,8 +182,7 @@ export function ProductForm({
   const onInvalid = (errors: FieldErrors<ProductFormInput>) => {
     console.log("Validation failed:", errors);
     const labels: Record<string, string> = {
-      name_en: "Product Name (English)",
-      name_ar: "Product Name (Arabic)",
+      name_en: "Product Name",
       description_en: "Description (English)",
       description_ar: "Description (Arabic)",
       price: "Price",
@@ -258,7 +255,6 @@ export function ProductForm({
 
     const fd = new FormData();
     fd.append("name_en", data.name_en.trim());
-    fd.append("name_ar", data.name_ar.trim());
     fd.append("description_en", (data.description_en ?? "").trim());
     fd.append("description_ar", (data.description_ar ?? "").trim());
     fd.append("price", String(priceNum));
@@ -384,43 +380,23 @@ export function ProductForm({
         </p>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <div>
-          <label htmlFor="name_en" className={labelClass}>
-            Product Name (English)
-          </label>
-          <input
-            {...register("name_en")}
-            id="name_en"
-            placeholder="e.g. Chicken Burger"
-            className={inputClass}
-            aria-invalid={Boolean(errors.name_en) || undefined}
-            aria-describedby={errors.name_en ? "name_en_error" : undefined}
-          />
-          {errors.name_en && (
-            <p id="name_en_error" className={errorClass} role="alert">
-              {errors.name_en.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <label htmlFor="name_ar" className={labelClass}>
-            Product Name (Arabic)
-          </label>
-          <input
-            {...register("name_ar")}
-            id="name_ar"
-            placeholder="مثال: برجر دجاج"
-            className={inputClass}
-            aria-invalid={Boolean(errors.name_ar) || undefined}
-            aria-describedby={errors.name_ar ? "name_ar_error" : undefined}
-          />
-          {errors.name_ar && (
-            <p id="name_ar_error" className={errorClass} role="alert">
-              {errors.name_ar.message}
-            </p>
-          )}
-        </div>
+      <div>
+        <label htmlFor="name_en" className={labelClass}>
+          Product Name
+        </label>
+        <input
+          {...register("name_en")}
+          id="name_en"
+          placeholder="e.g. Oxbar Strawberry Lemon"
+          className={inputClass}
+          aria-invalid={Boolean(errors.name_en) || undefined}
+          aria-describedby={errors.name_en ? "name_en_error" : undefined}
+        />
+        {errors.name_en && (
+          <p id="name_en_error" className={errorClass} role="alert">
+            {errors.name_en.message}
+          </p>
+        )}
       </div>
 
       <div className="space-y-2">

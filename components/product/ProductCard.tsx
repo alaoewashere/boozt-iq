@@ -17,7 +17,6 @@ import { getProductDisplayName } from "@/lib/product-name";
 export type ProductCardData = {
   id: string;
   name_en: string;
-  name_ar: string;
   price: number;
   stock: number;
   isAvailable: boolean;
@@ -62,7 +61,6 @@ export function ProductCard({
   const wishItem = () => ({
     id: product.id,
     name_en: product.name_en,
-    name_ar: product.name_ar,
     price: product.price,
     imageUrl: product.imageUrl?.trim() || "",
     categorySlug: product.categorySlug,
@@ -164,7 +162,6 @@ export function ProductCard({
             addItem({
               id: product.id,
               name_en: product.name_en,
-              name_ar: product.name_ar,
               price: product.price,
               imageUrl: product.imageUrl?.trim() || "",
             });
