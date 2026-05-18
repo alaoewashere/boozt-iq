@@ -83,7 +83,7 @@ export default function CartPage() {
                 key={item.id}
                 className="flex gap-3 rounded-[3px] border border-[rgba(255,255,255,0.04)] bg-[#110608] p-3 md:gap-4 md:p-4"
               >
-                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-[3px] bg-[#1A080A] md:h-20 md:w-20">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[3px] bg-[#1A080A]">
                   {item.imageUrl?.trim() ? (
                     <Image
                       src={item.imageUrl}
@@ -114,7 +114,7 @@ export default function CartPage() {
                   <div className="mt-2 flex flex-nowrap items-center gap-2">
                     <button
                       type="button"
-                      className="shrink-0 rounded-[2px] border border-[rgba(154,0,2,0.12)] p-1.5 text-[#9A7F7A] transition-colors hover:text-[#9A0002]"
+                      className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-[2px] border border-[rgba(154,0,2,0.12)] p-1.5 text-[#9A7F7A] transition-colors hover:text-[#9A0002]"
                       onClick={() =>
                         updateQuantity(item.id, item.quantity - 1)
                       }
@@ -126,7 +126,7 @@ export default function CartPage() {
                     </span>
                     <button
                       type="button"
-                      className="shrink-0 rounded-[2px] border border-[rgba(154,0,2,0.12)] p-1.5 text-[#9A7F7A] transition-colors hover:text-[#9A0002]"
+                      className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-[2px] border border-[rgba(154,0,2,0.12)] p-1.5 text-[#9A7F7A] transition-colors hover:text-[#9A0002]"
                       onClick={() =>
                         updateQuantity(item.id, item.quantity + 1)
                       }
@@ -135,7 +135,7 @@ export default function CartPage() {
                     </button>
                     <button
                       type="button"
-                      className="ms-auto shrink-0 whitespace-nowrap font-body text-xs text-red-400 transition-colors hover:text-red-300"
+                      className="ms-auto flex min-h-[44px] shrink-0 items-center whitespace-nowrap font-body text-xs text-red-400 transition-colors hover:text-red-300"
                       onClick={() => removeItem(item.id)}
                     >
                       {t("cart.remove")}
@@ -149,7 +149,10 @@ export default function CartPage() {
           <footer
             className={cn(
               "shrink-0 border-t border-[rgba(154,0,2,0.12)] bg-[#0D0506] pt-4",
-              "pb-[max(5rem,calc(5rem+env(safe-area-inset-bottom,0px)))]",
+              "max-md:fixed max-md:inset-x-0 max-md:z-40 max-md:px-4",
+              "max-md:bottom-[max(4.25rem,calc(4.25rem+env(safe-area-inset-bottom,0px)))]",
+              "max-md:pb-[max(0.75rem,env(safe-area-inset-bottom))]",
+              "pb-[max(6.5rem,calc(6.5rem+env(safe-area-inset-bottom,0px)))]",
               "md:mt-8 md:flex md:flex-col md:items-end md:gap-4 md:border-t md:pt-8 md:pb-0"
             )}
           >
@@ -162,7 +165,7 @@ export default function CartPage() {
             <motion.div className="w-full md:w-auto" whileTap={{ scale: 0.98 }}>
               <Link
                 href="/checkout"
-                className="btn-luxury block w-full rounded-[2px] border border-[#9A0002] bg-transparent px-8 py-3 text-center font-body text-[0.75rem] font-medium uppercase tracking-[0.18em] text-[#9A0002] hover:bg-[#9A0002] hover:text-[#EFE6DE] hover:shadow-[0_0_28px_rgba(154,0,2,0.3)] md:inline-block"
+                className="btn-luxury flex min-h-[44px] w-full items-center justify-center rounded-[2px] border border-[#9A0002] bg-transparent px-8 py-3 text-center font-body text-[0.75rem] font-medium uppercase tracking-[0.18em] text-[#9A0002] hover:bg-[#9A0002] hover:text-[#EFE6DE] hover:shadow-[0_0_28px_rgba(154,0,2,0.3)] md:inline-flex"
               >
                 {t("cart.checkout")}
               </Link>

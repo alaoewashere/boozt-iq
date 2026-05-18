@@ -141,9 +141,9 @@ export function ProductCard({
         </button>
       </div>
 
-      <div className="relative flex flex-1 flex-col gap-1.5 px-3 pb-4 pe-11 pt-[14px] sm:px-4 sm:pe-12">
+      <div className="relative flex flex-1 flex-col gap-1.5 px-3 pb-3 pt-[14px] sm:px-4">
         <Link href={`/product/${product.id}`}>
-          <h3 className="line-clamp-2 min-h-[2rem] font-heading text-[1rem] uppercase leading-[1.3] text-[#EFE6DE] transition-colors group-hover:text-[var(--accent)] sm:min-h-[2.5rem] sm:text-[1.15rem]">
+          <h3 className="line-clamp-1 font-heading text-[0.95rem] uppercase leading-[1.3] text-[#EFE6DE] transition-colors group-hover:text-[var(--accent)] md:line-clamp-2 md:min-h-[2rem] md:text-[1rem] lg:min-h-[2.5rem] lg:text-[1.15rem]">
             {name}
           </h3>
         </Link>
@@ -153,7 +153,7 @@ export function ProductCard({
 
         <motion.button
           type="button"
-          whileTap={{ scale: 0.92 }}
+          whileTap={{ scale: 0.98 }}
           disabled={!inStock}
           onClick={(e) => {
             e.preventDefault();
@@ -166,10 +166,11 @@ export function ProductCard({
               imageUrl: product.imageUrl?.trim() || "",
             });
           }}
-          className="absolute bottom-4 end-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#9A0002] text-[#EFE6DE] shadow-lg transition-all duration-300 hover:scale-[1.12] hover:bg-[#C4000A] hover:shadow-[0_0_22px_rgba(154,0,2,0.5)] disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:scale-100"
+          className="mt-1 flex min-h-[44px] w-full items-center justify-center gap-2 rounded-[2px] border border-[#9A0002] bg-[#9A0002] font-body text-[0.7rem] font-medium uppercase tracking-[0.12em] text-[#EFE6DE] transition-all duration-300 hover:bg-[#C4000A] disabled:cursor-not-allowed disabled:opacity-30 md:absolute md:bottom-4 md:end-4 md:mt-0 md:h-9 md:w-9 md:min-h-0 md:gap-0 md:rounded-full md:border-0 md:p-0 md:shadow-lg md:hover:scale-[1.12] md:hover:shadow-[0_0_22px_rgba(154,0,2,0.5)]"
           aria-label={t("product.addToCart")}
         >
-          <Plus size={18} strokeWidth={2.5} />
+          <Plus size={18} strokeWidth={2.5} className="md:shrink-0" />
+          <span className="md:hidden">{t("product.addToCart")}</span>
         </motion.button>
       </div>
     </div>

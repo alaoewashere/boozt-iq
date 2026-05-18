@@ -19,6 +19,7 @@ export function SiteShell({
   const pathname = usePathname();
   const isAdmin = pathname?.includes("/admin") ?? false;
   const isCartPage = pathname === "/cart";
+  const isCheckoutPage = pathname === "/checkout";
 
   if (isAdmin) {
     return <>{children}</>;
@@ -30,7 +31,7 @@ export function SiteShell({
       <Navbar locale={locale} />
       <main
         className={
-          isCartPage
+          isCartPage || isCheckoutPage
             ? "flex min-h-0 flex-1 flex-col overflow-hidden bg-[#0D0506] pb-24 md:overflow-visible md:pb-0"
             : "flex-1 bg-[#0D0506] pb-24 md:pb-0"
         }

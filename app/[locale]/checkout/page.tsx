@@ -14,7 +14,9 @@ import {
   buildCheckoutWhatsAppMessage,
   buildWhatsAppUrl,
   normalizeWhatsAppNumber,
+  PENDING_CHECKOUT_WA_URL_KEY,
 } from "@/lib/whatsapp-order";
+import { cn } from "@/lib/utils";
 import { CHECKOUT_CITY } from "@/lib/checkout-areas";
 import { normalizeIqPhoneDigits, isValidIqPhoneDigits } from "@/lib/phone-iq";
 import { ProductImagePlaceholder } from "@/components/product/ProductImagePlaceholder";
@@ -36,7 +38,7 @@ function buildSchema(t: (k: string) => string) {
 type FormData = z.infer<ReturnType<typeof buildSchema>>;
 
 const inputCls =
-  "h-11 w-full rounded-[2px] border border-[rgba(154,0,2,0.1)] bg-[#1A080A] px-4 font-body text-sm font-light text-[#EFE6DE] placeholder:text-[#4D3030] transition-all duration-300 focus:border-[rgba(154,0,2,0.5)] focus:shadow-[0_0_0_3px_rgba(154,0,2,0.08)] focus:outline-none";
+  "min-h-[44px] w-full rounded-[2px] border border-[rgba(154,0,2,0.1)] bg-[#1A080A] px-4 font-body text-base font-light text-[#EFE6DE] placeholder:text-[#4D3030] transition-all duration-300 focus:border-[rgba(154,0,2,0.5)] focus:shadow-[0_0_0_3px_rgba(154,0,2,0.08)] focus:outline-none md:text-sm";
 
 export default function CheckoutPage() {
   const t = useTranslations("checkout");
@@ -110,7 +112,11 @@ export default function CheckoutPage() {
         total: grandTotal,
       });
       const waUrl = buildWhatsAppUrl(waDigits, message);
-      window.open(waUrl, "_blank", "noopener,noreferrer");
+      try {
+        sessionStorage.setItem(PENDING_CHECKOUT_WA_URL_KEY, waUrl);
+      } catch {
+        /* private mode / quota */
+      }
     }
 
     router.push(`/order-success?orderId=${encodeURIComponent(orderId)}`);
@@ -131,13 +137,15 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 md:py-12">
-      <PageHeading className="mb-8 md:mb-10">{t("title")}</PageHeading>
+    <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 flex-col px-4 py-4 md:py-12">
+      <header className="mb-4 shrink-0 md:mb-10">
+        <PageHeading className="mb-0">{t("title")}</PageHeading>
+      </header>
 
-      <div className="grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10">
-        {/* Order summary */}
+      <div className="grid min-h-0 flex-1 gap-6 overflow-y-auto overscroll-contain pb-36 md:grid-cols-2 md:items-start md:gap-10 md:overflow-visible md:pb-0">
+        {/* Order summary — below form on mobile */}
         <section
-          className="rounded-[3px] border border-[rgba(154,0,2,0.12)] bg-[#110608] p-5 md:p-6"
+          className="order-2 rounded-[3px] border border-[rgba(154,0,2,0.12)] bg-[#110608] p-5 md:order-none md:p-6"
           aria-labelledby="order-summary-heading"
         >
           <h2
@@ -206,12 +214,16 @@ export default function CheckoutPage() {
           </div>
         </section>
 
-        {/* Form */}
-        <section className="rounded-[3px] border border-[rgba(154,0,2,0.12)] bg-[#110608] p-5 md:p-6">
+        {/* Form — first on mobile */}
+        <section className="order-1 rounded-[3px] border border-[rgba(154,0,2,0.12)] bg-[#110608] p-5 md:order-none md:p-6">
           <h2 className="mb-5 font-heading text-lg uppercase tracking-[0.04em] text-[#EFE6DE]">
             {t("yourDetails")}
           </h2>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form
+            id="checkout-form"
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-4"
+          >
             <div>
               <label
                 htmlFor="checkout-name"
@@ -285,7 +297,7 @@ export default function CheckoutPage() {
                 rows={5}
                 required
                 {...register("notes")}
-                className="min-h-[140px] w-full resize-y rounded-[2px] border border-[rgba(154,0,2,0.1)] bg-[#1A080A] px-4 py-3 font-body text-sm font-light text-[#EFE6DE] placeholder:text-[#4D3030] transition-all duration-300 focus:border-[rgba(154,0,2,0.5)] focus:shadow-[0_0_0_3px_rgba(154,0,2,0.08)] focus:outline-none"
+                className="min-h-[140px] w-full resize-y rounded-[2px] border border-[rgba(154,0,2,0.1)] bg-[#1A080A] px-4 py-3 font-body text-base font-light text-[#EFE6DE] placeholder:text-[#4D3030] transition-all duration-300 focus:border-[rgba(154,0,2,0.5)] focus:shadow-[0_0_0_3px_rgba(154,0,2,0.08)] focus:outline-none md:text-sm"
                 placeholder={t("notesPlaceholder")}
               />
               {errors.notes && (
@@ -303,13 +315,41 @@ export default function CheckoutPage() {
               type="submit"
               disabled={isSubmitting}
               whileTap={{ scale: 0.98 }}
-              className="btn-luxury mt-2 flex h-12 w-full items-center justify-center rounded-[2px] border border-[#9A0002] bg-transparent font-body text-[0.75rem] font-medium uppercase tracking-[0.18em] text-[#9A0002] hover:bg-[#9A0002] hover:text-[#EFE6DE] hover:shadow-[0_0_28px_rgba(154,0,2,0.3)] disabled:cursor-not-allowed disabled:opacity-40"
+              className="btn-luxury mt-2 hidden h-12 w-full items-center justify-center rounded-[2px] border border-[#9A0002] bg-transparent font-body text-[0.75rem] font-medium uppercase tracking-[0.18em] text-[#9A0002] hover:bg-[#9A0002] hover:text-[#EFE6DE] hover:shadow-[0_0_28px_rgba(154,0,2,0.3)] disabled:cursor-not-allowed disabled:opacity-40 md:flex"
             >
               {isSubmitting ? t("submitting") : t("confirm")}
             </motion.button>
           </form>
         </section>
       </div>
+
+      {/* Mobile: sticky place-order bar above bottom nav */}
+      <footer
+        className={cn(
+          "fixed inset-x-0 z-[45] border-t border-[rgba(154,0,2,0.15)] bg-[rgba(13,5,6,0.97)] px-4 py-3 backdrop-blur-xl md:hidden",
+          "bottom-[max(4.25rem,calc(4.25rem+env(safe-area-inset-bottom,0px)))]",
+          "pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+        )}
+      >
+        <motion.div className="mx-auto flex max-w-lg items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="font-body text-[0.65rem] font-medium uppercase tracking-[0.12em] text-[#4D3030]">
+              {t("grandTotal")}
+            </p>
+            <p className="font-body text-lg font-medium tabular-nums text-[var(--accent)]">
+              {formatPrice(grandTotal, locale)}
+            </p>
+          </div>
+          <button
+            type="submit"
+            form="checkout-form"
+            disabled={isSubmitting}
+            className="btn-luxury flex min-h-[44px] shrink-0 items-center justify-center rounded-[2px] border border-[#9A0002] bg-[#9A0002] px-5 py-3 font-body text-[0.7rem] font-medium uppercase tracking-[0.14em] text-[#EFE6DE] shadow-[0_0_22px_rgba(154,0,2,0.35)] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {isSubmitting ? t("submitting") : t("confirm")}
+          </button>
+        </motion.div>
+      </footer>
     </div>
   );
 }

@@ -50,7 +50,7 @@ export function CartDrawer({ locale }: { locale: string }) {
           <motion.aside
             role="dialog"
             aria-modal
-            className="fixed top-0 z-50 flex h-full w-full max-w-md flex-col border-s border-[rgba(154,0,2,0.12)] bg-[#110608] shadow-2xl shadow-black/60 end-0"
+            className="fixed top-0 z-50 flex h-full w-full max-w-full flex-col border-s border-[rgba(154,0,2,0.12)] bg-[#110608] shadow-2xl shadow-black/60 end-0 md:max-w-md"
             variants={drawerVar}
             initial="hidden"
             animate="visible"
@@ -148,7 +148,7 @@ export function CartDrawer({ locale }: { locale: string }) {
               )}
             </div>
             {items.length > 0 && (
-              <div className="border-t border-[rgba(154,0,2,0.12)] p-4">
+              <div className="shrink-0 border-t border-[rgba(154,0,2,0.12)] p-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
                 <div className="mb-4 flex justify-between font-body text-sm">
                   <span className="text-[#9A7F7A]">{t("cart.total")}</span>
                   <span className="font-medium text-[var(--accent)]">

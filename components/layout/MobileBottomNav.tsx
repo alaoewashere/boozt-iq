@@ -59,7 +59,7 @@ export function MobileBottomNav() {
               key={href}
               href={href}
               className={cn(
-                "relative flex min-w-0 flex-1 flex-col items-center gap-0.5 py-2 font-body text-[10px] font-light tracking-[0.05em] transition-all duration-300",
+                "relative flex min-h-[44px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 py-2 font-body text-[10px] font-light tracking-[0.05em] transition-all duration-300",
                 active
                   ? "text-[var(--accent)]"
                   : "text-[#4D3030] hover:text-[#9A7F7A]"

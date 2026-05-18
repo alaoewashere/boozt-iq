@@ -10,7 +10,9 @@
     "admin": "الإدارة",
     "shop": "المتجر",
     "wishlist": "المفضلة",
-    "trackOrder": "تتبع الطلب 📦"
+    "trackOrder": "تتبع الطلب 📦",
+    "openMenu": "فتح القائمة",
+    "closeMenu": "إغلاق القائمة"
   },
   "hero": {
     "eyebrow": "بغداد، العراق",
@@ -122,7 +124,8 @@
   "orderSuccess": {
     "title": "شكراً لطلبك!",
     "orderIdLabel": "رقم الطلب:",
-    "whatsappLine": "سنتواصل معك عبر واتساب لتأكيد طلبك.",
+    "whatsappLine": "اضغط بالأسفل لإرسال تفاصيل طلبك على واتساب حتى نؤكد الطلب.",
+    "openWhatsApp": "فتح واتساب للتأكيد",
     "backToShop": "متابعة التسوق"
   },
   "adminOrders": {

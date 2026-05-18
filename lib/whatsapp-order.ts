@@ -3,6 +3,9 @@ import { getAreaLabel } from "@/lib/checkout-areas";
 import { buildOrderTrackUrl } from "@/lib/order-track-url";
 import { getProductDisplayName } from "@/lib/product-name";
 
+/** sessionStorage key: pre-filled WhatsApp URL after checkout (opened from success page). */
+export const PENDING_CHECKOUT_WA_URL_KEY = "boozt:pending-checkout-wa-url";
+
 /** Digits only, international format (e.g. 9647XXXXXXXXX). */
 export function normalizeWhatsAppNumber(raw: string | undefined): string {
   if (!raw?.trim()) return "";

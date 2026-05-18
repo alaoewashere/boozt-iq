@@ -6,7 +6,9 @@ import {
   ShoppingBag,
   ChevronDown,
   Heart,
+  Menu,
 } from "lucide-react";
+import { MobileMenu } from "@/components/layout/MobileMenu";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, usePathname } from "@/navigation";
 import { useCartStore } from "@/store/cart";
@@ -31,6 +33,7 @@ export function Navbar({ locale }: { locale: string }) {
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categories, setCategories] = useState<Cat[]>([]);
   const itemCount = useCartStore((s) => s.itemCount());
   const openCart = useCartStore((s) => s.openCart);
@@ -73,12 +76,26 @@ export function Navbar({ locale }: { locale: string }) {
           : "bg-[rgba(13,5,6,0.88)] backdrop-blur-[22px] backdrop-saturate-[180%]"
       )}
     >
-      <div className="mx-auto flex h-[70px] max-w-[1280px] items-center justify-between gap-4 px-6">
-        <Link href="/" className="flex shrink-0 items-baseline gap-0 font-heading text-[1.7rem] uppercase tracking-[0.08em] text-[#EFE6DE]">
-          <span>boozt</span>
-          <span className="text-[#9A0002]">.</span>
-          <span>iq</span>
-        </Link>
+      <motion.div className="mx-auto flex h-[70px] max-w-[1280px] items-center justify-between gap-3 px-4 sm:px-6">
+        <div className="flex min-w-0 items-center gap-1">
+          <button
+            type="button"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-[#9A7F7A] transition-colors duration-300 hover:text-[#9A0002] md:hidden"
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label={t("nav.openMenu")}
+            aria-expanded={mobileMenuOpen}
+          >
+            <Menu size={22} strokeWidth={1.5} />
+          </button>
+          <Link
+            href="/"
+            className="flex shrink-0 items-baseline gap-0 font-heading text-[1.5rem] uppercase tracking-[0.08em] text-[#EFE6DE] sm:text-[1.7rem]"
+          >
+            <span>boozt</span>
+            <span className="text-[#9A0002]">.</span>
+            <span>iq</span>
+          </Link>
+        </div>
 
         <nav className="hidden flex-1 items-center justify-center gap-8 md:flex">
           <Link href="/" className={navLinkCls}>
@@ -142,11 +159,15 @@ export function Navbar({ locale }: { locale: string }) {
           <Link
             href={pathname}
             locale={otherLocale}
-            className="font-body text-[0.75rem] font-light uppercase tracking-[0.14em] text-[#9A7F7A] transition-colors duration-300 hover:text-[#EFE6DE]"
+            className="flex min-h-[44px] items-center px-1 font-body text-[0.75rem] font-light uppercase tracking-[0.14em] text-[#9A7F7A] transition-colors duration-300 hover:text-[#EFE6DE]"
           >
             {locale === "en" ? "العربية" : "English"}
           </Link>
-          <Link href="/wishlist" className={iconCls} aria-label={t("nav.wishlist")}>
+          <Link
+            href="/wishlist"
+            className={cn(iconCls, "min-h-[44px] min-w-[44px] items-center justify-center")}
+            aria-label={t("nav.wishlist")}
+          >
             <Heart size={19} strokeWidth={1.5} />
             {mounted && wishCount > 0 && (
               <span className="absolute -end-0.5 -top-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-[var(--accent)] px-0.5 text-[9px] font-bold text-[#EFE6DE]">
@@ -156,7 +177,7 @@ export function Navbar({ locale }: { locale: string }) {
           </Link>
           <button
             type="button"
-            className={iconCls}
+            className={cn(iconCls, "hidden min-h-[44px] min-w-[44px] items-center justify-center md:inline-flex")}
             onClick={() => openCart()}
             aria-label={t("nav.cart")}
           >
@@ -168,7 +189,14 @@ export function Navbar({ locale }: { locale: string }) {
             )}
           </button>
         </div>
-      </div>
+      </motion.div>
+
+      <MobileMenu
+        open={mobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+        locale={locale}
+        categories={categories}
+      />
     </header>
   );
 }

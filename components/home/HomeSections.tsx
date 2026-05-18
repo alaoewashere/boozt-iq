@@ -77,8 +77,8 @@ export function HeroSection({
           className={cn(
             "mb-8 text-[#EFE6DE]",
             locale === "ar"
-              ? "font-ar-luxury text-[clamp(2rem,5vw,3.25rem)] font-normal leading-snug tracking-[0.02em]"
-              : "font-heading text-[clamp(5rem,12vw,9rem)] uppercase leading-none"
+              ? "font-ar-luxury text-3xl font-normal leading-snug tracking-[0.02em] sm:text-[clamp(2rem,5vw,3.25rem)]"
+              : "font-heading text-3xl uppercase leading-none sm:text-[clamp(3.5rem,10vw,9rem)]"
           )}
         >
           {accent ? (
@@ -157,13 +157,43 @@ export function CategoryGrid({
     `/products?category=${encodeURIComponent(slug)}&subcategory=`;
 
   return (
-    <section className="categories-section mx-auto max-w-[1280px] px-6">
+    <section className="categories-section mx-auto max-w-[1280px] px-4 sm:px-6">
       <div className="cat-header">
         <h2 className="cat-section-title">{t("title")}</h2>
         <span className="cat-section-count">{t("metaCount", { count })}</span>
       </div>
 
-      <div className="cat-magazine-grid">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:hidden">
+        {displayCats.map((row) => (
+          <Link
+            key={row.category.id}
+            href={productsHref(row.category.slug)}
+            className="relative flex min-h-[140px] flex-col justify-end overflow-hidden rounded-[3px] border border-[rgba(154,0,2,0.12)] bg-[#110608] p-3"
+            scroll={false}
+          >
+            {row.category.coverImageUrl ? (
+              <Image
+                src={row.category.coverImageUrl}
+                alt={catName(row)}
+                fill
+                className="cat-card-media"
+                sizes="50vw"
+              />
+            ) : null}
+            <div className="cat-sm-overlay" aria-hidden />
+            <div className="relative z-[2]">
+              <h3 className="font-heading text-lg uppercase tracking-[0.04em] text-[#EFE6DE]">
+                {catName(row)}
+              </h3>
+              <p className="mt-1 font-body text-[0.6rem] uppercase tracking-[0.1em] text-[#4D3030]">
+                {row.category.productCount ?? 0} {t("products")}
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <div className="cat-magazine-grid hidden lg:grid">
         {c0 && (
           <Link
             href={productsHref(c0.category.slug)}

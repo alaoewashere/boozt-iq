@@ -117,11 +117,11 @@ export function ProductDetailClient({
               : t("product.stockOut")}
           </span>
         </div>
-        <div className="flex flex-wrap items-center gap-4 pt-2">
-          <div className="flex items-center gap-2 rounded-[3px] border border-[rgba(255,255,255,0.04)] bg-[#110608] p-1">
+        <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="mx-auto flex items-center justify-center gap-2 rounded-[3px] border border-[rgba(255,255,255,0.04)] bg-[#110608] p-1 sm:mx-0">
             <button
               type="button"
-              className="rounded-[2px] p-2.5 text-[#9A7F7A] transition-colors duration-300 hover:text-[#9A0002]"
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[2px] text-[#9A7F7A] transition-colors duration-300 hover:text-[#9A0002]"
               onClick={() => setQty((q) => Math.max(1, q - 1))}
               aria-label={t("product.qtyDecrease")}
             >
@@ -132,7 +132,7 @@ export function ProductDetailClient({
             </span>
             <button
               type="button"
-              className="rounded-[2px] p-2.5 text-[#9A7F7A] transition-colors duration-300 hover:text-[#9A0002] disabled:opacity-30"
+              className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-[2px] text-[#9A7F7A] transition-colors duration-300 hover:text-[#9A0002] disabled:opacity-30"
               onClick={() =>
                 setQty((q) => Math.min(product.stock || 99, q + 1))
               }
@@ -147,13 +147,13 @@ export function ProductDetailClient({
             whileTap={{ scale: 0.98 }}
             disabled={!inStock}
             onClick={handleAdd}
-            className="btn-luxury min-w-[180px] rounded-[2px] border border-[#9A0002] bg-transparent px-8 py-3.5 font-body text-[0.75rem] font-medium uppercase tracking-[0.18em] text-[#9A0002] hover:bg-[#9A0002] hover:text-[#EFE6DE] hover:shadow-[0_0_28px_rgba(154,0,2,0.3)] disabled:cursor-not-allowed disabled:opacity-30"
+            className="btn-luxury flex min-h-[44px] w-full items-center justify-center rounded-[2px] border border-[#9A0002] bg-transparent px-8 py-3.5 font-body text-base font-medium uppercase tracking-[0.18em] text-[#9A0002] hover:bg-[#9A0002] hover:text-[#EFE6DE] hover:shadow-[0_0_28px_rgba(154,0,2,0.3)] disabled:cursor-not-allowed disabled:opacity-30 sm:min-w-[180px] sm:w-auto"
           >
             {t("product.addToCart")}
           </motion.button>
           <button
             type="button"
-            className="flex h-12 w-12 items-center justify-center rounded-full border border-[rgba(154,0,2,0.25)] transition-all duration-300 hover:border-[#9A0002] hover:shadow-[0_0_22px_rgba(154,0,2,0.22)]"
+            className="mx-auto flex h-12 min-h-[44px] w-12 items-center justify-center rounded-full border border-[rgba(154,0,2,0.25)] transition-all duration-300 hover:border-[#9A0002] hover:shadow-[0_0_22px_rgba(154,0,2,0.22)] sm:mx-0"
             aria-label={t("wishlist.toggle")}
             onClick={() => toggleWish(wishItem())}
           >

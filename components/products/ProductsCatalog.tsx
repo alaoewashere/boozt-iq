@@ -45,7 +45,7 @@ function buildPageItems(
 }
 
 const paginationBtnBase =
-  "rounded-[2px] border border-[rgba(154,0,2,0.12)] bg-[#110608] px-3 py-1.5 font-body text-sm font-light text-[#9A7F7A] transition-all duration-200 hover:border-[rgba(154,0,2,0.35)] hover:text-[#EFE6DE]";
+  "min-h-[44px] rounded-[2px] border border-[rgba(154,0,2,0.12)] bg-[#110608] px-3 py-1.5 font-body text-sm font-light text-[#9A7F7A] transition-all duration-200 hover:border-[rgba(154,0,2,0.35)] hover:text-[#EFE6DE]";
 
 function CatalogPagination({
   page,
@@ -294,7 +294,7 @@ export function ProductsCatalog({
     locale === "ar" ? s.name_ar : s.name_en;
 
   return (
-    <div className="mx-auto max-w-[1280px] px-6 py-10">
+    <div className="mx-auto max-w-[1280px] px-4 py-8 sm:px-6 sm:py-10">
       {/* Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -313,7 +313,7 @@ export function ProductsCatalog({
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder={t("searchPlaceholder")}
-            className="h-11 w-full rounded-[2px] border border-[rgba(154,0,2,0.1)] bg-[#1A080A] py-2 ps-10 pe-4 font-body text-sm font-light text-[#EFE6DE] placeholder:text-[#4D3030] transition-all duration-300 focus:border-[rgba(154,0,2,0.5)] focus:shadow-[0_0_0_3px_rgba(154,0,2,0.08)] focus:outline-none"
+            className="min-h-[44px] w-full rounded-[2px] border border-[rgba(154,0,2,0.1)] bg-[#1A080A] py-2 ps-10 pe-4 font-body text-base font-light text-[#EFE6DE] placeholder:text-[#4D3030] transition-all duration-300 focus:border-[rgba(154,0,2,0.5)] focus:shadow-[0_0_0_3px_rgba(154,0,2,0.08)] focus:outline-none md:text-sm"
             aria-label={t("searchPlaceholder")}
           />
         </div>
@@ -326,7 +326,7 @@ export function ProductsCatalog({
             type="button"
             onClick={() => setCategory(null)}
             className={cn(
-              "shrink-0 rounded-[2px] border px-4 py-2 font-body text-[0.8rem] font-light transition-colors",
+              "flex min-h-[44px] shrink-0 items-center rounded-[2px] border px-4 py-2 font-body text-[0.8rem] font-light whitespace-nowrap transition-colors",
               !effectiveCategorySlug
                 ? "border-[var(--accent)] bg-[rgba(154,0,2,0.1)] text-[var(--accent)]"
                 : "border-[rgba(154,0,2,0.12)] text-[#9A7F7A]"
@@ -357,7 +357,7 @@ export function ProductsCatalog({
               type="button"
               onClick={() => setSubcategory(null)}
               className={cn(
-                "shrink-0 rounded-[2px] border px-3 py-1.5 font-body text-xs font-light",
+                "flex min-h-[44px] shrink-0 items-center rounded-[2px] border px-3 py-1.5 font-body text-xs font-light whitespace-nowrap",
                 !subcategorySlug
                   ? "border-[var(--accent)] text-[var(--accent)]"
                   : "border-[rgba(154,0,2,0.12)] text-[#4D3030]"
@@ -371,7 +371,7 @@ export function ProductsCatalog({
                 type="button"
                 onClick={() => setSubcategory(s.slug)}
                 className={cn(
-                  "shrink-0 rounded-[2px] border px-3 py-1.5 font-body text-xs font-light transition-colors",
+                  "flex min-h-[44px] shrink-0 items-center rounded-[2px] border px-3 py-1.5 font-body text-xs font-light whitespace-nowrap transition-colors",
                   subcategorySlug === s.slug
                     ? "border-[var(--accent)] text-[var(--accent)]"
                     : "border-[rgba(154,0,2,0.12)] text-[#9A7F7A]"

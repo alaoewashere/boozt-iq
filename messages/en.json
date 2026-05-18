@@ -10,7 +10,9 @@
     "admin": "Admin",
     "shop": "Shop",
     "wishlist": "Wishlist",
-    "trackOrder": "Track Order 📦"
+    "trackOrder": "Track Order 📦",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "hero": {
     "eyebrow": "Baghdad, Iraq",
@@ -122,7 +124,8 @@
   "orderSuccess": {
     "title": "Thank you for your order!",
     "orderIdLabel": "Order ID:",
-    "whatsappLine": "We will contact you on WhatsApp to confirm your order.",
+    "whatsappLine": "Tap below to send your order details on WhatsApp so we can confirm it.",
+    "openWhatsApp": "Open WhatsApp to confirm",
     "backToShop": "Continue shopping"
   },
   "adminOrders": {

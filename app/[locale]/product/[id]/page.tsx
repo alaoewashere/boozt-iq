@@ -63,7 +63,7 @@ export default async function ProductPage({
         <span className="text-[var(--text-secondary)]">{name}</span>
       </nav>
 
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-14">
+      <div className="flex flex-col gap-8 lg:grid lg:grid-cols-2 lg:gap-14">
         <ProductDetailClient product={toProductDetail(product)} locale={locale} />
       </div>
 
