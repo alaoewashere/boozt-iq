@@ -69,7 +69,7 @@ export function Footer({ className }: { className?: string }) {
           </h3>
           <div className="flex gap-3">
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/boozt.smoke/"
               target="_blank"
               rel="noopener noreferrer"
               className="flex h-10 w-10 items-center justify-center rounded-full border border-[rgba(154,0,2,0.25)] text-[#9A7F7A] transition-all duration-300 hover:border-[#9A0002] hover:text-[#9A0002] hover:shadow-[0_0_22px_rgba(154,0,2,0.22)]"
