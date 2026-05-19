@@ -70,7 +70,7 @@ export function inferCategorySlugs(
     return { categorySlug: "hookah", subcategorySlug: "hookahs" };
   }
   if (t.includes("oxbar") && t.includes("g turbo")) {
-    return { categorySlug: "vape", subcategorySlug: "oxbar-g-turbo" };
+    return { categorySlug: "pods", subcategorySlug: "oxbar-g-turbo" };
   }
   if (t.includes("tri-fusion") || t.includes("tri fusion")) {
     return { categorySlug: "pods", subcategorySlug: "oxbar-tri-fusion" };
@@ -211,8 +211,14 @@ export function inferCategorySlugs(
   if (t.includes("mod") || t.includes("device")) {
     return { categorySlug: "vape", subcategorySlug: "nexlim" };
   }
-  if (t.includes("oxbar")) {
-    return { categorySlug: "vape", subcategorySlug: "oxbar" };
+  if (
+    t.includes("oxbar") &&
+    !t.includes("g turbo") &&
+    !(t.includes("pod") || t.includes("بود")) &&
+    !t.includes("svopp") &&
+    !t.includes("svoop")
+  ) {
+    return { categorySlug: "pods", subcategorySlug: "oxbar" };
   }
   if (t.includes("vape") || t.includes("فيب")) {
     return { categorySlug: "vape", subcategorySlug: "juices" };
