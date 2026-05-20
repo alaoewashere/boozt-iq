@@ -8,6 +8,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/navigation";
 import { fadeUp, staggerContainer } from "@/lib/animations";
 import { cn } from "@/lib/utils";
+import { dedupeCategoriesBySlug } from "@/lib/category-dedupe";
 import type { CategoryTreeWithCover } from "@/lib/types";
 
 const SmokeParticles = dynamic(
@@ -142,8 +143,9 @@ export function CategoryGrid({
   locale: string;
 }) {
   const t = useTranslations("categories");
-  const displayCats = categories.slice(0, 4);
-  const count = categories.length;
+  const uniqueCats = dedupeCategoriesBySlug(categories);
+  const displayCats = uniqueCats.slice(0, 4);
+  const count = uniqueCats.length;
   const [c0, c1, c2, c3] = displayCats;
 
   const catName = (c: (typeof displayCats)[number] | undefined) =>

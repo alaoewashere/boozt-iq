@@ -135,7 +135,7 @@ function buildHomeMagazineCategoryTree(
     if (url) coverBySlug.set(slug, url);
   }
 
-  const visible = filterVisibleCatalogCategories(tree);
+  const visible = dedupeCategoriesBySlug(filterVisibleCatalogCategories(tree));
   const enriched: CategoryTreeWithCover[] = visible.map(({ category, subcategories }) => ({
     category: {
       ...category,

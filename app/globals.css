@@ -493,8 +493,8 @@ body:has(.boozt-intro) {
   text-transform: uppercase;
 }
 
+/* Display toggled via Tailwind `hidden lg:grid` — do not set display:grid here or it overrides `hidden` on mobile */
 .cat-magazine-grid {
-  display: grid;
   grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr);
   grid-template-rows: 1fr 1fr;
   gap: 10px;

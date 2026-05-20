@@ -16,6 +16,18 @@ function parsePriceIqd(text: string | null): number {
   return Number.isFinite(n) && n > 0 ? n : 0;
 }
 
+/** Oxbar Svopp line (DB often spells category "Oxbar Svoop"). */
+function isOxbarSvoppLine(categoryText: string, productName: string): boolean {
+  const t = `${String(categoryText ?? "").trim()} ${String(productName ?? "").trim()}`.toLowerCase();
+  if (!t.includes("oxbar")) return false;
+  return (
+    t.includes("svopp") ||
+    t.includes("svoop") ||
+    /\boxbar\s+svoop\b/i.test(t) ||
+    /\boxbar\s+svopp\b/i.test(t)
+  );
+}
+
 function parseProductName(productName: string): string {
   const raw = String(productName ?? "").trim();
   if (raw.startsWith("{")) {
@@ -53,6 +65,26 @@ export function inferCategorySlugs(
       return { categorySlug: cat, subcategorySlug: sub };
     }
   }
+
+  const nameLower = name.toLowerCase();
+  /** Trust product name when DB category is wrong (e.g. Vozol Vista stored as "Oxbar Pod"). */
+  if (nameLower.includes("vozol") && !nameLower.includes("oxbar")) {
+    if (
+      nameLower.includes("gear ice") ||
+      t.includes("ice & sweet") ||
+      t.includes("ice and sweet")
+    ) {
+      return { categorySlug: "pods", subcategorySlug: "vozol-gear-ice-sweet" };
+    }
+    if (nameLower.includes("gear") || t.includes("فوزول جير")) {
+      return { categorySlug: "pods", subcategorySlug: "vozol-gear" };
+    }
+    if (nameLower.includes("star") || (nameLower.includes("vozol") && t.includes("40000"))) {
+      return { categorySlug: "pods", subcategorySlug: "vozol-star-40000" };
+    }
+    return { categorySlug: "pods", subcategorySlug: "vozol" };
+  }
+
   if (
     /^hookah\s+molasses\s+packets$/i.test(cat) ||
     /^hookah\s*\/\s*hookah-molasses-packets$/i.test(cat)
@@ -84,7 +116,7 @@ export function inferCategorySlugs(
   if (t.includes("al-sheikh") || t.includes("al sheikh") || t.includes("الشيخ")) {
     return { categorySlug: "pods", subcategorySlug: "oxbar-al-sheikh" };
   }
-  if (t.includes("svopp") && t.includes("oxbar")) {
+  if (isOxbarSvoppLine(cat, name)) {
     return { categorySlug: "pods", subcategorySlug: "oxbar-svopp" };
   }
   if (t.includes("mosmo") && t.includes("storm")) {
@@ -95,6 +127,13 @@ export function inferCategorySlugs(
   }
   if (t.includes("mosmo") && (t.includes(" gt") || t.endsWith("gt") || t.includes("mosmo gt"))) {
     return { categorySlug: "pods", subcategorySlug: "mosmo-gt" };
+  }
+  if (
+    /^vozol$/i.test(cat) ||
+    /^vozo[l;]?$/i.test(cat) ||
+    (t.includes("vozol") && t.includes("vista"))
+  ) {
+    return { categorySlug: "pods", subcategorySlug: "vozol" };
   }
   if (
     (t.includes("vozol") && t.includes("gear ice")) ||
@@ -119,7 +158,8 @@ export function inferCategorySlugs(
   }
   if (
     (t.includes("pod") || t.includes("بود")) &&
-    (t.includes("oxbar") || t.includes("oxbar pod"))
+    (t.includes("oxbar") || t.includes("oxbar pod")) &&
+    !isOxbarSvoppLine(cat, name)
   ) {
     return { categorySlug: "pods", subcategorySlug: "oxbar-pod" };
   }
@@ -215,8 +255,7 @@ export function inferCategorySlugs(
     t.includes("oxbar") &&
     !t.includes("g turbo") &&
     !(t.includes("pod") || t.includes("بود")) &&
-    !t.includes("svopp") &&
-    !t.includes("svoop")
+    !isOxbarSvoppLine(cat, name)
   ) {
     return { categorySlug: "pods", subcategorySlug: "oxbar" };
   }
