@@ -90,9 +90,20 @@ export function Footer({ className }: { className?: string }) {
         </div>
       </div>
 
-      <p className="mt-12 text-center font-body text-[0.72rem] font-light text-[#4D3030]">
-        © {new Date().getFullYear()} boozt.iq
-      </p>
+      <div className="mt-12 space-y-2 text-center font-body text-[0.72rem] font-light text-[#4D3030]">
+        <p>© {new Date().getFullYear()} boozt.iq</p>
+        <p className="uppercase tracking-[0.12em]">
+          DEVELOPED BY{" "}
+          <a
+            href="https://www.instagram.com/_9pd_/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#9A7F7A] transition-colors duration-300 hover:text-[#9A0002]"
+          >
+            @_9pd_
+          </a>
+        </p>
+      </div>
     </footer>
   );
 }
